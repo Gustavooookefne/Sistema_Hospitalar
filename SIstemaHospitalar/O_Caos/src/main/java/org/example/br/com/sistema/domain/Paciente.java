@@ -22,6 +22,10 @@ public class Paciente {
         this.CEP = CEP;
     }
 
+    public Paciente() {
+
+    }
+
     public int getId() {
         return id;
     }
