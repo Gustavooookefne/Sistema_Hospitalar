@@ -8,7 +8,7 @@ public class ProtocoloEmergencia implements IProtocoloAtendimento {
     @Override
     public String priorizar(Paciente paciente) {
 
-        return "VERMELHO! Atendimento imediato para: " + paciente.nome;
+        return "VERMELHO! BPM: " + paciente.frequenciaCardica + " " + "Atendimento imediato para: " + paciente.nome;
     }
 
 }

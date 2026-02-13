@@ -14,22 +14,27 @@ public class Main {
 
         TriagemService hospital = new TriagemService();
 
-        System.out.println("=== SISTEMA HOSPITLAR===\n");
+        System.out.println("\n=== SISTEMA HOSPITLAR===");
 
         System.out.print("Nome do Paciente: ");
         String nome = leitor.nextLine();
-        Paciente paciente = new Paciente(nome, 80);
 
+        System.out.print("Frequência Cardíaca: ");
+        int bpm = leitor.nextInt();
+
+        leitor.nextLine();
+
+            Paciente  paciente = new Paciente(nome, bpm);
         System.out.println("\nEscolha o tipo de Atendimento: ");
         System.out.println("1 - Emergência (Risco de Vida)");
         System.out.println("2 - Urgência (Moderado) ");
 
-        int escolha = leitor.nextInt();
+            String opcao = leitor.nextLine();
 
-        if (escolha == 1) {
-            hospital.configurarPainel(new ProtocoloEmergencia());
+        if (opcao.equals("1")) {
+            hospital.configurarProtocolo(new ProtocoloEmergencia());
         } else {
-            hospital.configurarPainel(new ProtocoloUrgencia());
+            hospital.configurarProtocolo(new ProtocoloUrgencia());
         }
         hospital.realizarAtendimento(paciente);
 
