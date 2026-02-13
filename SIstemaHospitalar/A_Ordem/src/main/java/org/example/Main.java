@@ -3,11 +3,13 @@ package org.example;
 import org.example.domain.Paciente;
 import org.example.infra.ProtocoloUrgencia;
 import org.example.service.TriagemService;
+
 import java.util.Scanner;
+
 import org.example.infra.ProtocoloEmergencia;
 
 public class Main {
-    public static void main (String []args) {
+    public static void main(String[] args) {
         Scanner leitor = new Scanner(System.in);
 
         TriagemService hospital = new TriagemService();
@@ -24,7 +26,7 @@ public class Main {
 
         int escolha = leitor.nextInt();
 
-        if (escolha ==  1) {
+        if (escolha == 1) {
             hospital.configurarPainel(new ProtocoloEmergencia());
         } else {
             hospital.configurarPainel(new ProtocoloUrgencia());

@@ -8,11 +8,11 @@ public class TriagemService {
     private IProtocoloAtendimento protocolo;
     private PainelNotification painel = new PainelNotification();
 
-    public void configurarPainel (IProtocoloAtendimento novoProtocolo) {
+    public void configurarPainel(IProtocoloAtendimento novoProtocolo) {
         this.protocolo = novoProtocolo;
     }
 
-    public void realizarAtendimento (Paciente paciente) {
+    public void realizarAtendimento(Paciente paciente) {
         if (protocolo == null) {
             System.out.println("Erro! Nenhum protocolo foi configurado!");
             return;

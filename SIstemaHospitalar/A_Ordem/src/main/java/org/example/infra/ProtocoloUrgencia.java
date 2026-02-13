@@ -6,7 +6,7 @@ import org.example.domain.Paciente;
 public class ProtocoloUrgencia implements IProtocoloAtendimento {
 
     @Override
-    public String priorizar (Paciente paciente) {
+    public String priorizar(Paciente paciente) {
 
         return "AMARELO! Atendimento em até 1 hora para: " + paciente.nome;
     }
