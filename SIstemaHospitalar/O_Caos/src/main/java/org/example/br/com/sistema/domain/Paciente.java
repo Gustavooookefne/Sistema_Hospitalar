@@ -2,6 +2,7 @@ package org.example.br.com.sistema.domain;
 
 public class Paciente {
 
+    //Model do Paciente
     private int id;
     private String nomeCompleto;
     private String dataDeNacimento;
