@@ -14,31 +14,43 @@ public class Main {
 
         TriagemService hospital = new TriagemService();
 
-        System.out.println("\n=== SISTEMA HOSPITLAR===");
+        boolean rodando = true;
 
-        System.out.print("Nome do Paciente: ");
-        String nome = leitor.nextLine();
+        System.out.println("\n=== SISTEMA HOSPITLAR===\n");
 
-        System.out.print("Frequência Cardíaca: ");
-        int bpm = leitor.nextInt();
+        while (rodando) {
+            System.out.print("Nome do Paciente: ");
+            String nome = leitor.nextLine();
 
-        leitor.nextLine();
+            System.out.print("Frequência Cardíaca: ");
+            int bpm = leitor.nextInt();
 
-            Paciente  paciente = new Paciente(nome, bpm);
-        System.out.println("\nEscolha o tipo de Atendimento: ");
-        System.out.println("1 - Emergência (Risco de Vida)");
-        System.out.println("2 - Urgência (Moderado) ");
+            leitor.nextLine();
+
+            Paciente paciente = new Paciente(nome, bpm);
+            System.out.println("\nEscolha o tipo de Atendimento: ");
+            System.out.println("1 - Emergência (Risco de Vida)");
+            System.out.println("2 - Urgência (Moderado) ");
+            System.out.println("3 - Sair ");
 
             String opcao = leitor.nextLine();
 
-        if (opcao.equals("1")) {
-            hospital.configurarProtocolo(new ProtocoloEmergencia());
-        } else {
-            hospital.configurarProtocolo(new ProtocoloUrgencia());
+            switch (opcao) {
+                case "1":
+                    hospital.configurarProtocolo(new ProtocoloEmergencia());
+                    System.out.println("Atendimento finalizado com sucesso!");
+                case "2":
+                    hospital.configurarProtocolo(new ProtocoloUrgencia());
+                    System.out.println("Atendimento finalizado com sucesso!");
+                case "3":
+                    System.out.println("\nEncerrando o atendimento...");
+                    rodando = false;
+                    break;
+                default:
+                System.out.println("\n Opção inválida! Voltando ao início...");
+                break;
+            }
         }
-        hospital.realizarAtendimento(paciente);
-
-        System.out.println("\n Atendimento finalizado com sucesso!");
         leitor.close();
     }
 }
