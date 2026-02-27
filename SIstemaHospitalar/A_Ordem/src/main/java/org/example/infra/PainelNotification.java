@@ -1,11 +1,14 @@
 package org.example.infra;
 
-public class PainelNotification {
+import org.example.domain.INotification;
 
-    public void chamarNoPainel(String mensagem) {
-        System.out.println("\n------------------------------------");
-        System.out.println("\nNOTIFICAÇÂO: " + mensagem);
-        System.out.println("\n------------------------------------");
+public class PainelNotification implements INotification {
 
+    @Override
+    public void notificar(String mensagem) {
+        // Implementacao concreta de notificacao (detalhe de infraestrutura).
+        System.out.println("\n------------------------------------");
+        System.out.println("\nNOTIFICACAO: " + mensagem);
+        System.out.println("\n------------------------------------");
     }
 }
