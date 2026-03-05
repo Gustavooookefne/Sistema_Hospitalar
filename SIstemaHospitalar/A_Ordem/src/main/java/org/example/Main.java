@@ -28,6 +28,8 @@ public class Main {
 
         // Loop principal do sistema: simula o funcionamento contínuo de uma recepção
         while (rodando) {
+            // Adicionado um separador para não colar os menus e deixar a tela mais limpa
+            System.out.println("------------------------------------");
             System.out.println("Escolha o tipo de atendimento:");
             System.out.println("1 - Emergencia (Risco de vida)");
             System.out.println("2 - Urgencia (Moderado)");
@@ -55,7 +57,9 @@ public class Main {
                     // O hospital não precisa saber como a regra funciona, apenas executa.
                     hospital.configurarProtocolo(new ProtocoloEmergencia());
                     hospital.realizarAtendimento(pacienteEmergencia);
-                    System.out.println("Atendimento finalizado com sucesso!");
+
+                    // Adicionado o \n no final para pular uma linha extra antes do menu voltar
+                    System.out.println(" Atendimento finalizado com sucesso!\n");
                     break;
 
                 case "2":
@@ -69,7 +73,9 @@ public class Main {
                     // Se criarmos um "ProtocoloAzul", o TriagemService continua intacto.
                     hospital.configurarProtocolo(new ProtocoloUrgencia());
                     hospital.realizarAtendimento(pacienteUrgencia);
-                    System.out.println("Atendimento finalizado com sucesso!");
+
+                    // Adicionado o \n no final para pular uma linha extra antes do menu voltar
+                    System.out.println(" Atendimento finalizado com sucesso!\n");
                     break;
 
                 case "3":
@@ -80,7 +86,7 @@ public class Main {
 
                 default:
                     // Tratamento de erro caso o usuário digite uma letra ou número inexistente
-                    System.out.println("\nOpcao invalida! Voltando ao inicio...");
+                    System.out.println("\nOpcao invalida! Voltando ao inicio...\n");
                     break;
             }
         }
@@ -94,13 +100,25 @@ public class Main {
      * Tira a lógica de ler os dados do paciente de dentro do "main", deixando o código mais limpo.
      */
     private static Paciente lerPaciente(Scanner leitor) {
-        System.out.print("Nome do paciente: ");
-        String nome = lerLinhaSegura(leitor);
+        String nome = "";
 
-        // Verifica se houve algum erro de leitura ou cancelamento
-        if (nome == null) {
-            System.out.println("\nEntrada finalizada. Encerrando o atendimento...");
-            return null;
+        // Loop para travar o nome vazio (agora não passa mais só com Enter!)
+        while (true) {
+            System.out.print("Nome do paciente: ");
+            nome = lerLinhaSegura(leitor);
+
+            // Verifica se houve algum erro de leitura ou cancelamento
+            if (nome == null) {
+                System.out.println("\nEntrada finalizada. Encerrando o atendimento...");
+                return null;
+            }
+
+            // Validação: Garante que o usuário digitou algum caractere válido
+            if (nome.trim().isEmpty()) {
+                System.out.println(" Erro: O nome nao pode ficar em branco!");
+            } else {
+                break; // Se o nome for válido, quebra o loop e continua!
+            }
         }
 
         // Chama outra função segura para garantir que o BPM será um número válido
