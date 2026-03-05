@@ -5,18 +5,31 @@ import org.example.domain.IPacienteRepository;
 import org.example.domain.IProtocoloAtendimento;
 import org.example.domain.Paciente;
 
+/**
+ * SRP (Princípio da Responsabilidade Única):
+ * O TriagemService não salva no banco, não imprime na tela e não calcula risco.
+ * A única responsabilidade dele é ORQUESTRAR (coordenar) o atendimento usando suas ferramentas.
+ */
 public class TriagemService {
+
+    // DIP (Princípio da Inversão de Dependência):
+    // Repare que não usamos classes concretas aqui (como PainelNotification).
+    // O serviço depende apenas das ABSTRAÇÕES (Interfaces).
     private final INotification notification;
     private final IPacienteRepository pacienteRepository;
-    // Composicao da Strategy selecionada em tempo de execucao.
+
+    // OCP (Princípio do Aberto/Fechado) usando o Padrão Strategy:
+    // Deixamos a estratégia "solta" para ser injetada em tempo de execução.
     private IProtocoloAtendimento protocolo;
 
+    // Construtor: Exige que entreguem as ferramentas prontas para ele.
     public TriagemService(INotification notification, IPacienteRepository pacienteRepository) {
-        // DIP: service depende de abstracoes, nao de classes concretas da infra.
         this.notification = notification;
         this.pacienteRepository = pacienteRepository;
     }
 
+    // Aberto para expansão: Podemos injetar qualquer protocolo novo aqui
+    // sem nunca precisar alterar as regras desta classe.
     public void configurarProtocolo(IProtocoloAtendimento novoProtocolo) {
         this.protocolo = novoProtocolo;
     }
@@ -27,9 +40,14 @@ public class TriagemService {
             return;
         }
 
-        // Persiste o paciente antes de aplicar o protocolo de atendimento.
+        // Delegação de tarefas (Mantendo o SRP):
+        // 1. Pede para o banco salvar
         pacienteRepository.salvar(paciente);
+
+        // 2. Pede para a estratégia priorizar
         String resultado = protocolo.priorizar(paciente);
+
+        // 3. Pede para o painel notificar
         notification.notificar(resultado);
     }
 }
