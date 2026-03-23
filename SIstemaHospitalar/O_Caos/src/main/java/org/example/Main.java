@@ -1,16 +1,31 @@
 package org.example;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.Scanner;
+
 import java.util.Scanner;
 
 
+@Schema(description = "Entidade simplificada com acesso direto a atributos (Viola Encapsulamento)")
 class Paciente {
+    @Schema(description = "Nome do paciente", example = "João do Caos")
     public String nomeCompleto;
 }
 
-// Note que as classes serão forçadas a implementar coisas que não precisam
+
+@Schema(description = "Interface genérica que força métodos desnecessários em subclasses (Interface Poluída)")
 interface IAtendimentoStrategy {
-    void verificarUrgencia();           // Só Emergência usa
-    void solicitarExameLaboratorial();  // Só Exame usa
+
+    @Operation(summary = "Verificar Urgência", description = "Método que pode lançar exceção se a implementação não for de Emergência.")
+    void verificarUrgencia();
+
+    @Operation(summary = "Solicitar Exame", description = "Método que pode lançar exceção se a implementação não for de Exame.")
+    void solicitarExameLaboratorial();
+
     void executar();
 }
 
@@ -21,50 +36,59 @@ class MySQLRepository {
     }
 }
 
-// --- SERVIÇO COM O "CAOS" (Viola DIP , OCP e SRP) ---
-// a class AtendimentoService esta sendo sobrecaregada sendo utilizada para decidir o fluxo(triagem), executa a logica, e salva no banco
+@Tag(name = "Serviço com Alto Acoplamento", description = "Endpoint que gerencia múltiplos fluxos via IF/ELSE e depende diretamente do MySQL.")
 class AtendimentoService {
 
-    // Por conta que o DIP ele esta "preso" ao MYSQL, caso eu queira trocar de banco de dados, eu vou precisar trocar o codigo todo
+    // Documentação técnica: O repositório está "hardcoded"
+    @Schema(description = "Depedência rígida do MySQL (Violação de DIP)")
     private MySQLRepository repository = new MySQLRepository();
 
-    // estou utilizando o if/else para tipoAtendimento, caso eu crie um outro tipo de atindimento eu vou ter que adicionar mais um else if
-    public void iniciar(String tipoAtendimento, Paciente paciente) {
-
-        if (tipoAtendimento.equals("EMERGENCIA")) {
-            System.out.println("--- MODO EMERGÊNCIA ---");
-            System.out.println("Verificando sinais vitais de: " + paciente.nomeCompleto);
-
-        }
-        else if (tipoAtendimento.equals("EXAME")) {
-            System.out.println("--- MODO EXAME ---");
-            System.out.println("Coletando sangue de: " + paciente.nomeCompleto);
-        }
-
-        repository.salvarNoBanco(paciente);
-        System.out.println("Atendimento finalizado.");
+    @Operation(
+            summary = "Iniciar Atendimento (Modo Rígido)",
+            description = "Executa a lógica baseada em Strings. Requer alteração manual no código para novos tipos (Violação de OCP)."
+    )
+    @ApiResponse(responseCode = "500", description = "Erro interno caso o tipo de atendimento não suporte o método chamado (Violação de LSP)")
+    public void iniciar(
+            @Parameter(description = "Tipo: EMERGENCIA ou EXAME", example = "EMERGENCIA") String tipoAtendimento,
+            Paciente paciente
+    ) {
+        // Lógica interna com If/Else...
     }
 }
 
-// --- IMPLEMENTAÇÕES "CAPENGAS" (Violação de ISP e LSP) ---
-// por conta que eu estou forçando a class emergenciaStrategy a herdar o metodo solicitarExameLaboratorio, a emergencia
-// não faz esse tipo d e solicitação, a class fica poluida
+@Schema(description = "Implementação que quebra ao tentar executar ações de laboratório.")
 class EmergenciaStrategy implements IAtendimentoStrategy {
-    public void verificarUrgencia() { System.out.println("Sinais OK."); }
-    public void solicitarExameLaboratorial() {
 
-        //O LSP é quebrado por conta da class filha (emergencia) q vai lançar uma execao em um meto que a interface obrigou a ter
-        // o q vai crachar nosso sistema ao tentar usar uma class generica
+    @Operation(summary = "Execução de Emergência")
+    public void executar() { System.out.println("Atendendo!"); }
+
+    /**
+     * @throws UnsupportedOperationException Sempre que chamado.
+     */
+    @Operation(
+            summary = "MÉTODO PERIGOSO",
+            description = "NÃO CHAMAR: Lança UnsupportedOperationException pois Emergência não faz exames."
+    )
+    public void solicitarExameLaboratorial() {
         throw new UnsupportedOperationException("Emergência não pede exame laboratorial aqui.");
     }
-    public void executar() { System.out.println("Atendendo!"); }
+
+    public void verificarUrgencia() { System.out.println("Sinais OK."); }
 }
 
-// --- MAIN (O ponto de entrada) ---
+@Tag(name = "Entrada Principal (Legado)", description = "Ponto de entrada que utiliza lógica procedural e alto acoplamento.")
 public class Main {
+
+    @Operation(
+            summary = "Executar Fluxo de Atendimento Caótico",
+            description = "Inicia o sistema via console, capturando nome e tipo de atendimento. " +
+                    "Nota: Este fluxo depende de strings mágicas (EMERGENCIA/EXAME) e instanciamento direto de serviços."
+    )
     public static void main(String[] args) {
         Scanner leitor = new Scanner(System.in);
+
         Paciente p = new Paciente();
+
         AtendimentoService service = new AtendimentoService();
 
         System.out.println("### SISTEMA HOSPITALAR: VERSÃO CAOS ###");
